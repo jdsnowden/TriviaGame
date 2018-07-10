@@ -9,45 +9,73 @@ $(document).ready(function () {
         for (let i = 0; i < catergories.length; i++) {
             // console.log(catergories[i]['question'])
             //console.log(catergories[i]['incorrect_answers'] + catergories[i]['correct_answer'])       
-            var answerChoice = [catergories[i]['incorrect_answers'] + catergories[i]['correct_answer']]
-            console.log(answerChoice)
+            var choices = [catergories[i]['incorrect_answers'].concat(catergories[i]['correct_answer'])]
+            var text = [catergories[i]['question']]
+            var answer = [catergories[i]['correct_answer']]
+            console.log(answer)
+            console.log(text)
+            console.log(choices)
         }
+        function questions(text, choices, answer) {
+            this.text = text;
+            this.choices = choices;
+            this.answer = answer;
+            console.log(questions)
+        }
+        question.prototype.correctAnswer = function (choice) {
+            return choice === this.answer;
 
-        //create the question logic w/ all answers changing their order. 
-        function populate(params) {
-            if (quiz.isEnded()) {
-                //showScores ();
-            } else {
-                // show next question
-                var element = document.getElementById("");
-                element.innerHTML = quiz.getquestionIndex().text
-                // show chices
-                var choices = quiz.getQuestionIndex().choices;
+            function quiz(questions) {
+                this.score =
+                this.questions = questions
+                this.questionIndex = 0
             }
+            quiz.prototype.getQuestionIndex = function () {
+                return this.questions[this.questionIndex]
             }
-        })
-        //Scoring Principals
-        function quiz(questions) {
-            this.score = 0;
-            this.questions = questions;
-            this.questionIndex = 0
-        }
-        quiz.prototype.getQuestionIndex = function () {
-            return this.questions[this.questionIndex];
-        }
-        quiz.prototype.isEnded = function () {
-            return this.questions.length === this.questionIndex;
-        }
-        quiz.prototype.guess = function (answer) {
-            this.questionIndex++;
-            
-            if (this.getQuestionIndex().correctAnswer(answer)) {
-                this.score++
+            quiz.prototype.isEnded = function () {
+                return this.questions.length === this.questionIndex
             }
+            quiz.prototype.guess = function (answer) {
+                this.questionIndex++
+
+                if (this.getQuestionIndex().correctAnswer(answer)) {
+                    this.socre++
+                }
+            }
+            //var questions =
+
+            var quiz = new quiz(questions)
+
+            function populate() {
+                if (quiz.isEnded()) {
+                    //showScores()
+                }
+                else {
+                    //showQuestion
+                    var element = document.getElementById('questions')
+                    element.innerHTML = quiz.getQuestionIndex().text
+                    
+                    //show choices
+                    var choices = quiz.getQuestionIndex().choices;
+                    for(var i =0; i < choices.length; i++) {
+                        var element = document.getElementById("button" + i)
+                        element.innerHTML = choices [i]
+                        guess("btn" + i, choices)
+                    }
+                }
+            }
+function showscores() {
+    var gameOverHtml = "<h1>result</h1>"
+    gameOverHtml += "<h2 id='score'> Your Scores: " + quiz.score + "</h2>"
+    var element = document.getElementById("quiz")
+    element.innerHTML = gameOverHtml;
+}
         }
-        
 
 
 
 
-});
+
+    });
+})
