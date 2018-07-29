@@ -1,81 +1,112 @@
 $(document).ready(function () {
-    // create the API paths to generate questions *Note can only gernerate questions every 10 min. 
-    //var questions =
-    // cant get questions to pre load. 
-    // not sure how to parse this and add it to the code that was supplied to populate info. 
-    $.ajax({
-        url: "https://opentdb.com/api.php?amount=10&type=multiple",
-        method: "GET"
-    }).then(function (response) {
-        console.log(response)
-        let catergories = response.results
-        for (let i = 0; i < catergories.length; i++)
-        var choices = [catergories[i]['incorrect_answers'].concat(catergories[i]['correct_answer'])]
-        var text = [catergories[i]['question']]
-        var answer = [catergories[i]['correct_answer']]
 
-        console.log(answer)
-        console.log(text)
-        console.log(choices)
+    let quizContainer = document.getElementById('quiz');
+    let resultsContainer = document.getElementById('results');
+    let submitButton = document.getElementById('submit');
 
-
-    });
-
-
-    questions.prototype.correctAnswer = function (choice) {
-        return choice === this.answer;
-
-        function quiz(questions) {
-            this.score =
-                this.questions = questions
-            this.questionIndex = 0
-        }
-        quiz.prototype.getQuestionIndex = function () {
-            return this.questions[this.questionIndex]
-        }
-        quiz.prototype.isEnded = function () {
-            return this.questions.length === this.questionIndex
-        }
-        quiz.prototype.guess = function (answer) {
-            this.questionIndex++
-
-            if (this.getQuestionIndex().correctAnswer(answer)) {
-                this.socre++
-            }
-        }
-
-
-        var quiz = new quiz(questions)
-
-        function populate() {
-            if (quiz.isEnded()) {
-                //showScores()
-            }
-            else {
-                //showQuestion
-                var element = document.getElementById('questions')
-                element.innerHTML = quiz.getQuestionIndex().text
-
-                //show choices
-                var choices = quiz.getQuestionIndex().choices;
-                for (var i = 0; i < choices.length; i++) {
-                    var element = document.getElementById("button" + i)
-                    element.innerHTML = choices[i]
-                    guess("btn" + i, choices)
-                }
-            }
-        }
-        function showscores() {
-            var gameOverHtml = "<h1>result</h1>"
-            gameOverHtml += "<h2 id='score'> Your Scores: " + quiz.score + "</h2>"
-            var element = document.getElementById("quiz")
-            element.innerHTML = gameOverHtml;
-        }
+    var quizOver = function(){
+        alert(`${score} out of ${questions.length}`)
     }
 
 
+    $("#submit").click(results)
+
+    var questions = [
+        {
+            question: "Who is the president of France?",
+            answers: {
+                a: "Emmanuel Macron",
+                b: "Jaques Couseau",
+                c: "Tony Parker",
+            },
+            correct_answer: "a",
+        },
+        {
+
+            question: "What is Mario's brother's name?",
+            answers: {
+                a: "Bowser",
+                b: "Green Mario",
+                c: "Luigi",
+            },
+            correct_answer: "c",
+        },
+        {
+            question: "How many planets are there in the solar system?",
+            answers: {
+                a: 9,
+                b: 7,
+                c: 8,
+            },
+            correct_answer: "c",
+        },
+        {
+            question: "Who won the 2001 World Series?",
+            answers: {
+                a: "Arizona Diamondbacks",
+                b: "New York Yankees",
+                c: "St. Louis Cardinals",
+            },
+            correct_answer: "a",
+        },
+        {
+            question: "Who wrote To Kill a Mockingbird?",
+            answers: {
+                a: "Orson Wells",
+                b: "Harper Lee",
+                c: "Jennifer Simmons",
+            },
+            correct_answer: "b"
+        }
+    ]
+
+    var makeQuiz = function () {
+        let output = []
+
+        questions.forEach(
+            (currentQues, questNum) => {
+                const answers = []
+
+                for (letter in currentQues.answers) {
+                    answers.push(
+                        `<label>
+                        <input type="radio" name="question${questNum}" value="${letter}">
+                        ${letter} :
+                        ${currentQues.answers[letter]}
+                      </label>`
+                    );
+                }
+                output.push(
+                    `<div class="question"> ${currentQues.question} </div>
+                        <div class="answers"> ${answers.join('')} </div>`
+                );
+
+            })
+        quizContainer.innerHTML = output.join('');
+    }
+    makeQuiz()
+    var score = 0;
+
+    var results = function () {
+        let answerGrp = quizContainer.querySelectorAll('.answers');
 
 
+
+        questions.forEach((currentQues, questNum) => {
+            let answerGrps = answerGrp[questNum]
+            let select = 'input[name=question' + questNum + ']:checked';
+            let userAnswer = (answerGrps.querySelector(select) || {}).value;
+
+            if (userAnswer === currentQues.correct_answer) {
+                score++
+            }
+        })
+        resultsContainer.innerHTML = `${score} out of ${questions.length}`;
+    }
+
+    submitButton.addEventListener("click", results);
+
+    setTimeout(results, 8000)
 
 
 })
